@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <random>
+#include <chrono>
 
 enum SUIT { HEART, CLUB, DIAMOND, SPADE}; 
 enum VALUE {ACE, TWO, THREE, FOUR, FIVE, SIX,SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING};
@@ -27,7 +28,8 @@ class Card{
 
 };
 
-std::vector<Card> GenerateDeck(){
+std::vector<Card> GenerateDeck()
+{
     std::vector<Card> deck;
     deck.reserve(52);
 
@@ -44,8 +46,9 @@ std::vector<Card> GenerateDeck(){
     return deck;
 }
 
-void shuffleDeck(std::vector<Card>& deck){
-    auto rng = std::default_random_engine();
+void shuffleDeck(std::vector<Card>& deck, unsigned seed)
+{
+    auto rng = std::default_random_engine(seed);
     std::shuffle(std::begin(deck), std::end(deck), rng);
 }
 
@@ -53,14 +56,17 @@ void shuffleDeck(std::vector<Card>& deck){
 int main()
 {
     std::vector<Card> deck = GenerateDeck();
-    shuffleDeck(deck);
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count(); 
+    shuffleDeck(deck, seed);
     
     for (int i = 0; i < deck.size(); ++i){
         std::cout<<cardSuits[deck[i].GetSuit()]<<" "<<cardValues[deck[i].GetValue()]<<std::endl;
     }
 
     std::cout<<std::endl;
-    shuffleDeck(deck);
+
+
+    shuffleDeck(deck, seed);
 
     for (int i = 0; i < deck.size(); ++i){
         std::cout<<cardSuits[deck[i].GetSuit()]<<" "<<cardValues[deck[i].GetValue()]<<std::endl;
