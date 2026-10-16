@@ -4,7 +4,7 @@
 
 
 const std::string cardSuits[4] = {"HEART", "CLUB", "DIAMOND", "SPADE"};
-const std::string cardValues[13] = {"ACE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "JACK", "QUEEN", "KING"};
+const std::string cardValues[13] = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
 
 Card::Card(SUIT suit, VALUE value): m_suit(suit), m_value(value){}
 

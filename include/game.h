@@ -28,6 +28,7 @@ class Game
         int InputBet(int handNumber);
         void InputStartHands();
         void ContinuePlay();
+        bool ShouldDealerPlay();
         void DelayConsoleOutput(int milliseconds = 1000) const;
         OUTCOME DetermineOutcome(const Hand& playerHand, const Hand& dealerHand);
         int CalculateReward(OUTCOME outcome, int bet, int handBumber);

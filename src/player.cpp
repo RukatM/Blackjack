@@ -28,7 +28,7 @@ void Player::InputMoney()
 {
     while (true)
     {
-        std::cout << "\nPodaj ilość pieniędzy do wpłaty:\n";
+        std::cout << "\nPodaj liczbę pieniędzy do wpłaty:\n";
         int deposit = ReadInt();
 
         if (deposit > 0)

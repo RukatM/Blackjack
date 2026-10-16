@@ -80,11 +80,19 @@ void Game::InputStartHands()
 {
     while (true)
     {
-        std::cout << "Podaj ilość zakładów:\n";
+        std::cout << "Podaj liczbę zakładów:\n";
         m_startHands = ReadInt();       
 
-        if(m_startHands > 0) return;
-        std::cout<<"Liczba zakładów musi być większa niż 0. Sprobuj jeszcze raz.\n";
+        if(m_startHands > 5) 
+        {
+            std::cout<<"Liczba zakładów za duża. Maskymalnie 5. Spróbuj jeszcze raz.\n\n";
+        }
+        else if(m_startHands <= 0)
+        {
+            std::cout<<"Liczba zakładów musi być większa niż 0. Sprobuj jeszcze raz.\n\n";
+        }
+        else return;
+        
         
     }
 }
@@ -147,31 +155,35 @@ void Game::PlayRound()
         }
         DelayConsoleOutput();
     }
-
+    
+    
     const Hand& dealerHand = m_dealer.GetHand();
-
     std::cout<<"\nKrupier odkrywa kartę...\n";
     DelayConsoleOutput(2000);
     dealerHand.PrintHand();    
     DelayConsoleOutput(2000);
-    while(m_dealer.ShouldHit())
+    
+    if(ShouldDealerPlay())
     {
+        while(m_dealer.ShouldHit())
+        {
         m_dealer.AddCard(m_deck.DrawCard());
         std::cout<<"\n";
         dealerHand.PrintHand();    
         DelayConsoleOutput(2000);
-    }
+        }
 
-    for(size_t i = 0; i < m_player.GetNumberOfHands(); ++i)
-    {
+        for(size_t i = 0; i < m_player.GetNumberOfHands(); ++i)
+        {
         const Hand& playerHand = m_player.GetHand(i);
         OUTCOME outcome = DetermineOutcome(playerHand, dealerHand);
         int reward = CalculateReward(outcome, playerHand.GetBet(), i+1);
         if(reward > 0) m_player.RecieveReward(reward);
         DelayConsoleOutput();
-    } 
+        } 
 
-    DelayConsoleOutput();
+        DelayConsoleOutput();
+    }
     std::cout<<"\nTwoje saldo wynosi: "<<m_player.GetMoney()<<"\n";    
 }
 
@@ -180,12 +192,18 @@ void Game::ContinuePlay()
     while (true)
     {
         int choice = 0;
-        std::cout << "Czy chcesz kontynuować?\n1 -> TAK! \n2 -> NIE :( \n";
+        std::cout << "Czy chcesz kontynuować?\n1 -> TAK! \n2 -> NIE :( \n3 -> Dopłać pieniądze i kontynuuj\n";
         choice = ReadInt();       
 
         if(choice == 1 || choice == 2)
         {
-            m_continuePlay =  choice == 1 ? true : false;
+            if (choice == 2) m_continuePlay = false;   
+            break;
+        }
+        else if(choice == 3)
+        {
+            m_player.InputMoney();
+            std::cout<<"\nTwoje Saldo wynosi: "<<m_player.GetMoney()<<"\n\n";
             break;
         }
         else
@@ -193,6 +211,16 @@ void Game::ContinuePlay()
              std::cout<<"Wybrano niedozwoloną opcję. Sprobuj jeszcze raz.\n";
         }
     }
+}
+
+bool Game::ShouldDealerPlay()
+{
+    for (size_t i = 0; i < m_player.GetNumberOfHands(); ++i)
+    {
+        const Hand& h = m_player.GetHand(i);
+        if (!h.IsBust() && !h.IsBlackjack()) return true;
+    }
+    return false;
 }
 
 void Game::DelayConsoleOutput(int milliseconds) const
